@@ -12,6 +12,6 @@ const config: Config = {
       borderRadius: { "sexy-name": "11.11px" },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };
 export default config;
