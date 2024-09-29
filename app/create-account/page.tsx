@@ -1,6 +1,9 @@
+"use client";
+
 import FormInput from "@/components/FormInput";
 import FormButton from "@/components/FormButton";
 import SocialLogin from "@/components/SocialLogin";
+
 import { useFormState } from "react-dom";
 import { createAccount } from "./actions";
 
@@ -21,19 +24,28 @@ export default function CreateAccount() {
           type="text"
           placeholder="Username"
           required
+          errors={state?.fieldErrors.username}
         />
-        <FormInput name="email" type="email" placeholder="Email" required />
+        <FormInput
+          name="email"
+          type="email"
+          placeholder="Email"
+          required
+          errors={state?.fieldErrors.email}
+        />
         <FormInput
           name="password"
           type="password"
           placeholder="Password"
           required
+          errors={state?.fieldErrors.password}
         />
         <FormInput
           name="password2"
           type="password"
           placeholder="Confirm Password"
           required
+          errors={state?.fieldErrors.confirmPassword}
         />
         <FormButton text="Create account" />
       </form>
