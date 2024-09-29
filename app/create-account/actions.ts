@@ -2,19 +2,13 @@
 
 import { z } from "zod";
 
+import {
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_REGEX,
+  PASSWORD_REGEX_ERROR,
+} from "@/lib/constants";
+
 const checkUsername = (username: string) => !username.includes("potato");
-
-const passwordRegex = new RegExp(
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*?[#?!@$%^&*-]).+$/
-);
-
-const checkPasswords = ({
-  password,
-  confirmPassword,
-}: {
-  password: string;
-  confirmPassword: string;
-}) => password === confirmPassword;
 
 const formSchema = z
   .object({
@@ -34,12 +28,9 @@ const formSchema = z
     email: z.string().email(),
     password: z
       .string()
-      .min(4)
-      .regex(
-        passwordRegex,
-        "Passwords must contain at least one UPPERCASE, lowercase, number and special characters #?!@$%^&*-."
-      ),
-    confirmPassword: z.string().min(4),
+      .min(PASSWORD_MIN_LENGTH)
+      .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
+    confirmPassword: z.string().min(PASSWORD_MIN_LENGTH),
   })
   .superRefine(({ password, confirmPassword }, ctx) => {
     if (password !== confirmPassword) {
