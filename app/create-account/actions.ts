@@ -2,14 +2,50 @@
 
 import { z } from "zod";
 
-const formSchema = z.object({
-  username: z.string().min(5).max(5),
-  email: z.string().email(),
-  password: z.string().min(10),
-  confirmPassword: z.string().min(10),
-});
+const checkUsername = (username: string) => !username.includes("potato");
+
+const checkPasswords = ({
+  password,
+  confirmPassword,
+}: {
+  password: string;
+  confirmPassword: string;
+}) => password === confirmPassword;
+
+const formSchema = z
+  .object({
+    username: z
+      .string({
+        // invalid_type_error: 타입이 맞지 않을 때
+        // required_error: 필수값이 없을 때
+        invalid_type_error: "Username must be a string!",
+        required_error: "No username",
+      })
+      .min(5, "Way too short")
+      .max(10, "That is too long")
+      .refine(checkUsername, "No potato allowed"),
+    email: z.string().email(),
+    password: z.string().min(10),
+    confirmPassword: z.string().min(10),
+  })
+  .superRefine(({ password, confirmPassword }, ctx) => {
+    if (password !== confirmPassword) {
+      // ctx로 특정 필드에 에러 메시지 추가
+      ctx.addIssue({
+        code: "custom",
+        message: "Two passwords should be equal",
+        path: ["confirmPassword"],
+      });
+    }
+  });
+/* .refine(checkPasswords, {
+     message: "Two passwords should be equal",
+        path: ["confirmPassword"],
+  }); */
 
 export async function createAccount(prevState: any, formData: FormData) {
+  console.log(formData);
+
   const data = {
     username: formData.get("username"),
     email: formData.get("email"),

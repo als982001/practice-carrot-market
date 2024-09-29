@@ -41,7 +41,7 @@ export default function CreateAccount() {
           errors={state?.fieldErrors.password}
         />
         <FormInput
-          name="password2"
+          name="confirmPassword"
           type="password"
           placeholder="Confirm Password"
           required
