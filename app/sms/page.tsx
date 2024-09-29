@@ -3,10 +3,10 @@
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { useFormState } from "react-dom";
-import { smsVerification } from "./actions";
+import { smsLogin } from "./actions";
 
 export default function SMSLogin() {
-  const [status, dispatch] = useFormState(smsVerification, null);
+  const [status, dispatch] = useFormState(smsLogin, null);
 
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
@@ -21,6 +21,8 @@ export default function SMSLogin() {
           type="number"
           placeholder="Verification code"
           required
+          min={100000}
+          max={999999}
         />
         <Button text="Verify" />
       </form>
