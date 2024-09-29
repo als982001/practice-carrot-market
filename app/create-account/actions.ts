@@ -4,6 +4,10 @@ import { z } from "zod";
 
 const checkUsername = (username: string) => !username.includes("potato");
 
+const passwordRegex = new RegExp(
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*?[#?!@$%^&*-]).+$/
+);
+
 const checkPasswords = ({
   password,
   confirmPassword,
@@ -22,11 +26,20 @@ const formSchema = z
         required_error: "No username",
       })
       .min(5, "Way too short")
-      .max(10, "That is too long")
+      // .max(10, "That is too long")
+      .trim()
+      .toLowerCase()
+      .transform((username) => `🔥 ${username}`)
       .refine(checkUsername, "No potato allowed"),
     email: z.string().email(),
-    password: z.string().min(10),
-    confirmPassword: z.string().min(10),
+    password: z
+      .string()
+      .min(4)
+      .regex(
+        passwordRegex,
+        "Passwords must contain at least one UPPERCASE, lowercase, number and special characters #?!@$%^&*-."
+      ),
+    confirmPassword: z.string().min(4),
   })
   .superRefine(({ password, confirmPassword }, ctx) => {
     if (password !== confirmPassword) {
@@ -59,5 +72,7 @@ export async function createAccount(prevState: any, formData: FormData) {
 
   if (!result.success) {
     return result.error.flatten();
+  } else {
+    console.log(result);
   }
 }
