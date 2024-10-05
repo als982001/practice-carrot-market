@@ -7,8 +7,46 @@ import {
   PASSWORD_REGEX,
   PASSWORD_REGEX_ERROR,
 } from "@/lib/constants";
+import db from "@/lib/db";
 
 const checkUsername = (username: string) => !username.includes("potato");
+
+/*
+const checkPasswords = ({
+  password,
+  confirmPassword,
+}: {
+  password: string;
+  confirmPassword: string;
+}) => password === confirmPassword;
+*/
+
+const checkUniqueUsername = async (username: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      username,
+    },
+    // select: user에서 가져오고 싶은 것들 선택
+    select: {
+      id: true, // user에서 id만 가져옴 (email 등은 안 가져옴)
+    },
+  });
+
+  return !Boolean(user);
+};
+
+const checkUniqueEmail = async (email: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return !Boolean(user);
+};
 
 const formSchema = z
   .object({
@@ -23,9 +61,17 @@ const formSchema = z
       .max(10, "That is too long")
       .trim()
       .toLowerCase()
-      .transform((username) => `🔥 ${username}`)
+      // .transform((username) => `🔥 ${username}`)
+      .refine(checkUniqueUsername, "This username is already taken")
       .refine(checkUsername, "No potato allowed"),
-    email: z.string().email(),
+    email: z
+      .string()
+      .email()
+      .toLowerCase()
+      .refine(
+        checkUniqueEmail,
+        "There is an account already registered with that email"
+      ),
     password: z
       .string()
       .min(PASSWORD_MIN_LENGTH)
@@ -59,7 +105,7 @@ export async function createAccount(prevState: any, formData: FormData) {
 
   // formSchema.parse(data.username);
 
-  const result = formSchema.safeParse(data);
+  const result = await formSchema.safeParseAsync(data);
 
   if (!result.success) {
     return result.error.flatten();
