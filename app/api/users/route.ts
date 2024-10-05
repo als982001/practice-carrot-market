@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  console.log(request);
+  console.log("GET!!!", request);
 
   return Response.json({ ok: true });
 }
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const data = await request.json();
 
-  console.log("log the user in");
+  console.log("POST!!!", data);
 
   return Response.json(data);
 }

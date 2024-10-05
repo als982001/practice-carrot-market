@@ -1,6 +1,10 @@
 "use server";
 
+import bcrypt from "bcrypt";
 import { z } from "zod";
+import { getIronSession } from "iron-session";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 import {
   PASSWORD_MIN_LENGTH,
@@ -94,8 +98,6 @@ const formSchema = z
   }); */
 
 export async function createAccount(prevState: any, formData: FormData) {
-  console.log(formData);
-
   const data = {
     username: formData.get("username"),
     email: formData.get("email"),
@@ -110,6 +112,33 @@ export async function createAccount(prevState: any, formData: FormData) {
   if (!result.success) {
     return result.error.flatten();
   } else {
-    console.log(result);
+    const {
+      data: { username, email, password },
+    } = result;
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const user = await db.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const cookie = await getIronSession(cookies(), {
+      cookieName: "cookieName",
+      password: process.env.COOKIE_PASSWORD!,
+    });
+
+    // @ts-ignore
+    cookie.id = user.id;
+
+    await cookie.save();
+
+    redirect("/profile");
   }
 }
