@@ -27,9 +27,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 로그인을 한 상태
-
-  // 로그인을 한 상황에서 로그인 페이지로 진입하는 경우A
+  // 로그인을 한 상황에서 로그인 페이지로 진입하는 경우
   if (exists) {
     return NextResponse.redirect(new URL("/products", request.url));
   }
@@ -40,5 +38,5 @@ export async function middleware(request: NextRequest) {
 export const config = {
   // matcher: 여기에 적은 곳에서만 middleware 실행할 수 있게 함
   // matcher: ["/", "/profile", "/create-account", "/user/:path*"],
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
