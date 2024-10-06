@@ -12,8 +12,6 @@ import {
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 
-const checkUsername = (username: string) => !username.includes("potato");
-
 /*
 const checkPasswords = ({
   password,
@@ -22,7 +20,6 @@ const checkPasswords = ({
   password: string;
   confirmPassword: string;
 }) => password === confirmPassword;
-*/
 
 const checkUniqueUsername = async (username: string) => {
   const user = await db.user.findUnique({
@@ -50,6 +47,7 @@ const checkUniqueEmail = async (email: string) => {
 
   return !Boolean(user);
 };
+*/
 
 const formSchema = z
   .object({
@@ -63,23 +61,58 @@ const formSchema = z
       .min(5, "Way too short")
       .max(10, "That is too long")
       .trim()
-      .toLowerCase()
-      // .transform((username) => `🔥 ${username}`)
-      .refine(checkUniqueUsername, "This username is already taken")
-      .refine(checkUsername, "No potato allowed"),
-    email: z
-      .string()
-      .email()
-      .toLowerCase()
-      .refine(
+      .toLowerCase(),
+    // .transform((username) => `🔥 ${username}`)
+    // .refine(checkUniqueUsername, "This username is already taken")
+    // .refine(checkUsername, "No potato allowed"),
+    email: z.string().email().toLowerCase(),
+    /* .refine(
         checkUniqueEmail,
         "There is an account already registered with that email"
-      ),
+      ),*/
     password: z
       .string()
       .min(PASSWORD_MIN_LENGTH)
       .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
     confirmPassword: z.string().min(PASSWORD_MIN_LENGTH),
+  })
+  .superRefine(async ({ username }, ctx) => {
+    const user = await db.user.findUnique({
+      where: {
+        username,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (user) {
+      ctx.addIssue({
+        code: "custom",
+        message: "This username is already taken",
+        path: ["username"], // path가 없으면 이 에러 메시지는 formErrors로 들어감
+        fatal: true,
+      });
+
+      return z.NEVER; // z.NEVER를 return하는데 fatal이 true라면 이후의 refine을 실행하지 않고 끝냄
+    }
+  })
+  .superRefine(async ({ email }, context) => {
+    const user = await db.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+
+    if (user) {
+      context.addIssue({
+        code: "custom",
+        message: "This email is already taken",
+        path: ["email"],
+        fatal: true,
+      });
+
+      return z.NEVER;
+    }
   })
   .superRefine(({ password, confirmPassword }, ctx) => {
     if (password !== confirmPassword) {
