@@ -1,5 +1,6 @@
 import db from "@/lib/db";
 import getSession from "@/lib/session";
+import { destroyUserSession } from "@/utils/authUtils";
 import { notFound, redirect } from "next/navigation";
 
 async function getUser() {
@@ -23,11 +24,12 @@ async function getUser() {
 export default async function Profile() {
   const user = await getUser();
 
+  console.log(user);
+
   const logOut = async () => {
     "use server";
 
-    const session = await getSession();
-    await session.destroy();
+    await destroyUserSession();
 
     redirect("/");
   };

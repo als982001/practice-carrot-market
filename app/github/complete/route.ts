@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+import { setUserSession } from "@/utils/authUtils";
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
@@ -54,9 +54,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (user) {
-    const session = await getSession();
-    session.id = user.id;
-    await session.save();
+    await setUserSession(user.id);
 
     return redirect("/profile");
   }
@@ -72,9 +70,7 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const session = await getSession();
-  session.id = newUser.id;
-  await session.save();
+  await setUserSession(newUser.id);
 
   return redirect("/profile");
 }

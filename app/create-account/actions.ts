@@ -10,7 +10,7 @@ import {
   PASSWORD_REGEX_ERROR,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+import { setUserSession } from "@/utils/authUtils";
 
 /*
 const checkPasswords = ({
@@ -161,11 +161,7 @@ export async function createAccount(prevState: any, formData: FormData) {
       },
     });
 
-    const session = await getSession();
-
-    session.id = user.id;
-
-    await session.save();
+    await setUserSession(user.id);
 
     redirect("/profile");
   }

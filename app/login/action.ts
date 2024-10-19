@@ -12,7 +12,7 @@ import {
 } from "@/lib/constants";
 */
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+import { setUserSession } from "@/utils/authUtils";
 
 const checkEmailExists = async (email: string) => {
   const user = await db.user.findUnique({
@@ -69,11 +69,9 @@ export async function login(prevState: any, formData: FormData) {
   const ok = await bcrypt.compare(password, user!.password ?? "");
 
   if (ok) {
-    const session = await getSession();
-    session.id = user!.id;
-    await session.save();
+    await setUserSession(user!.id);
 
-    redirect("/profile");
+    return redirect("/profile");
   } else {
     return {
       fieldErrors: {
