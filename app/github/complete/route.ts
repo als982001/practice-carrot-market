@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 
 import db from "@/lib/db";
 import { setUserSession } from "@/utils/authUtils";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
@@ -42,7 +43,15 @@ export async function GET(request: NextRequest) {
     cache: "no-cache",
   });
 
-  const { id, avatar_url: avatarUrl, login } = await userProfileResponse.json();
+  const userProfileResponseResult = await userProfileResponse.json();
+
+  console.log(userProfileResponseResult);
+
+  const {
+    id,
+    avatar_url: avatarUrl,
+    login: username,
+  } = userProfileResponseResult;
 
   const user = await db.user.findUnique({
     where: {
@@ -59,18 +68,45 @@ export async function GET(request: NextRequest) {
     return redirect("/profile");
   }
 
-  const newUser = await db.user.create({
-    data: {
-      username: `${login}-gh`,
-      github_id: String(id),
-      avatar: avatarUrl,
-    },
-    select: {
-      id: true,
-    },
-  });
+  try {
+    const newUser = await db.user.create({
+      data: {
+        username,
+        github_id: String(id),
+        avatar: avatarUrl,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-  await setUserSession(newUser.id);
+    await setUserSession(newUser.id);
+  } catch (error) {
+    // PrismaClientKnownRequestError: Prisma에서 발생한 특정 에러
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      const targetFields = error.meta?.target as string[]; // ts 타입 에러 관련
 
-  return redirect("/profile");
+      if (targetFields.includes("username")) {
+        const newUser = await db.user.create({
+          data: {
+            username: `${username}_gh`, // 이미 중복되는 username으 있을 경우, username 뒤애 '_gh'를 붙임
+            github_id: String(id),
+            avatar: avatarUrl,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        await setUserSession(newUser.id);
+      }
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  } finally {
+    return redirect("/profile");
+  }
 }
