@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 import crypto from "crypto";
 import validator from "validator";
-import twilio from "twilio";
+// import twilio from "twilio";
 import { z } from "zod";
 
 import db from "@/lib/db";
