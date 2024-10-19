@@ -2,33 +2,21 @@ import { notFound, redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 import db from "@/lib/db";
-import { setUserSession } from "@/utils/authUtils";
+import {
+  getGithubAccessToken,
+  getGithubUserInfo,
+  setUserSession,
+} from "@/utils/authUtils";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
 
-  console.log({ nextUrl: request.nextUrl, code });
-
   if (!code) {
     return notFound();
   }
 
-  const accessTokenParams = new URLSearchParams({
-    client_id: process.env.GITHUB_CLIENT_ID!,
-    client_secret: process.env.GITHUB_CLIENT_SECRET!,
-    code,
-  }).toString();
-
-  const accessTokenURL = `https://github.com/login/oauth/access_token?${accessTokenParams}`;
-
-  const accessTokenResponse = await fetch(accessTokenURL, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-    },
-  });
-  const { error, access_token: accessToken } = await accessTokenResponse.json();
+  const { accessToken, error } = await getGithubAccessToken(code);
 
   if (error) {
     return new Response(null, {
@@ -36,35 +24,12 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const userProfileResponse = await fetch("https://api.github.com/user", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    cache: "no-cache",
-  });
-
-  const userProfileResponseResult = await userProfileResponse.json();
-
-  console.log(userProfileResponseResult);
-
-  const {
-    id,
-    avatar_url: avatarUrl,
-    login: username,
-  } = userProfileResponseResult;
-
-  const user = await db.user.findUnique({
-    where: {
-      github_id: String(id),
-    },
-    select: {
-      id: true,
-    },
-  });
+  const { id, avatarUrl, username, user } = await getGithubUserInfo(
+    accessToken
+  );
 
   if (user) {
     await setUserSession(user.id);
-
     return redirect("/profile");
   }
 
