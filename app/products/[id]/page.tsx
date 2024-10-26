@@ -40,6 +40,7 @@ export default async function ProductDetail({
 }: {
   params: { id: string };
 }) {
+  const useCloudFlare = false;
   const id = Number(params.id);
 
   if (isNaN(id)) {
@@ -60,7 +61,11 @@ export default async function ProductDetail({
         <Image
           className="object-cover"
           fill
-          src={product.photo}
+          src={
+            useCloudFlare
+              ? `${product.photo}/width=500,height=500`
+              : product.photo
+          }
           alt={product.title}
         />
       </div>

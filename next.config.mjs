@@ -9,6 +9,9 @@ const nextConfig = {
         protocol: "https",
         hostname: "x.com",
       },
+      {
+        hostname: "imagedelivery.net",
+      },
     ],
   },
 };
