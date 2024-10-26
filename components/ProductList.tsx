@@ -5,13 +5,15 @@ import { useEffect, useRef, useState } from "react";
 import { getMoreProducts } from "@/app/(tabs)/products/actions";
 import { InitialProducts } from "@/app/(tabs)/products/page";
 
-import ListProduct from "./ListProduct";
+import Product from "./Product";
 
 interface ProductListProps {
   initialProducts: InitialProducts;
 }
 
 export default function ProductList({ initialProducts }: ProductListProps) {
+  const useCloudFlare = false;
+
   const [products, setProducts] = useState(initialProducts);
   const [page, setPage] = useState(0);
   const [isLastPage, setIsLastPage] = useState(false);
@@ -63,7 +65,7 @@ export default function ProductList({ initialProducts }: ProductListProps) {
   return (
     <div className="p-5 flex flex-col gap-5">
       {products.map((product) => (
-        <ListProduct key={product.id} {...product} />
+        <Product key={product.id} {...product} useCloudFlare={useCloudFlare} />
       ))}
       {isLastPage ? null : (
         <span
