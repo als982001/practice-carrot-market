@@ -5,7 +5,7 @@ import { useState } from "react";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import { uploadProduct } from "./actions";
+import { getUploadUrl, uploadProduct } from "./actions";
 import { useFormState } from "react-dom";
 
 const IMAGE_SIZE_LIMIT = 5_242_880;
@@ -27,9 +27,13 @@ const checkValidImage = (file: File) => {
 };
 
 export default function AddProduct() {
-  const [preview, setPreview] = useState("");
+  const useCloudFlare = false;
 
-  const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [preview, setPreview] = useState("");
+  const [uploadUrl, setUploadUrl] = useState("");
+  const [imageId, setImageId] = useState("");
+
+  const onImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = event;
@@ -49,9 +53,47 @@ export default function AddProduct() {
     const url = URL.createObjectURL(file);
 
     setPreview(url);
+
+    const { success, result } = await getUploadUrl();
+
+    if (success) {
+      const { id, uploadUrl } = result;
+      setUploadUrl(uploadUrl);
+      setImageId(id);
+    }
   };
 
-  const [state, action] = useFormState(uploadProduct, null);
+  const interceptAction = async (_: any, formData: FormData) => {
+    const file = formData.get("photo");
+
+    if (!file) {
+      return;
+    }
+
+    const cloudflareForm = new FormData();
+
+    cloudflareForm.append("file", file);
+
+    const response = await fetch(uploadUrl, {
+      method: "POST",
+      body: cloudflareForm,
+    });
+
+    if (response.status !== 200) {
+      return;
+    }
+
+    const photoUrl = `${process.env.CLOUDFLARE_PHOTO_URL}/${imageId}`;
+
+    formData.set("photo", photoUrl);
+
+    return uploadProduct(_, formData);
+  };
+
+  const [state, action] = useFormState(
+    useCloudFlare ? interceptAction : uploadProduct,
+    null
+  );
 
   return (
     <div>

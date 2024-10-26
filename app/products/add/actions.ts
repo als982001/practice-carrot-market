@@ -67,3 +67,20 @@ export async function uploadProduct(prevState: any, formData: FormData) {
     redirect(`/products/${product.id}`);
   }
 }
+
+// cloudflare를 이용하는 경우
+export async function getUploadUrl() {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/images/v2/direct_upload`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.CLOUDFLARE_API_KEY}`,
+      },
+    }
+  );
+
+  const data = await response.json();
+
+  return data;
+}
