@@ -6,7 +6,7 @@ interface ButtonProps {
   text: string;
 }
 
-export default function FormButton({ text }: ButtonProps) {
+export default function Button({ text }: ButtonProps) {
   // useFormStatus hook은 form의 자식 요소에서 사용해야 한다.
   const { pending } = useFormStatus();
 
