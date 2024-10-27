@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
 
   // 로그인을 한 상황에서 로그인 페이지로 진입하는 경우
   if (exists) {
-    return NextResponse.redirect(new URL("/products", request.url));
+    return NextResponse.redirect(new URL("/home", request.url));
   }
 
   return NextResponse.next();

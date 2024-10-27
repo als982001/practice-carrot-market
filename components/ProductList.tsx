@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { getMoreProducts } from "@/app/(tabs)/products/actions";
-import { InitialProducts } from "@/app/(tabs)/products/page";
+import { getMoreProducts } from "@/app/(tabs)/home/actions";
+import { InitialProducts } from "@/app/(tabs)/home/page";
 
 import Product from "./Product";
 
