@@ -7,7 +7,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "x.com",
+        hostname: "upload.wikimedia.org",
       },
       {
         hostname: "imagedelivery.net",
