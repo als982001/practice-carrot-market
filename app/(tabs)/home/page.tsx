@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { unstable_cache as nextCache } from "next/cache";
+import { unstable_cache as nextCache, revalidatePath } from "next/cache";
 
 import ProductList from "@/components/ProductList";
 import db from "@/lib/db";
@@ -24,9 +24,7 @@ async function getInitialProducts() {
   return products;
 }
 
-const getCacheProducts = nextCache(getInitialProducts, ["home-products"], {
-  revalidate: 60,
-});
+const getCacheProducts = nextCache(getInitialProducts, ["home-products"]);
 
 export const metadata = {
   title: "Home",
@@ -39,8 +37,17 @@ export type InitialProducts = Prisma.PromiseReturnType<
 export default async function Products() {
   const initialProducts = await getCacheProducts();
 
+  const revalidate = async () => {
+    "use server";
+
+    revalidatePath("/home");
+  };
+
   return (
     <div className="p-5 flex flex-col gap-5">
+      <form action={revalidate}>
+        <button>Revalidate</button>
+      </form>
       <p>Product!</p>
       <div>
         <ProductList initialProducts={initialProducts} />
