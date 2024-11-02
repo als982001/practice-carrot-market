@@ -8,6 +8,17 @@ import getSession from "@/lib/session";
 import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
 
+/*
+const funcForCommit = async () => {
+  fetch("https://api.com", {
+    next: {
+      revalidate: 60,
+      tags: ["tagForCommit"],
+    },
+  });
+};
+*/
+
 async function getIsOwner(userId: number) {
   const session = await getSession();
 
