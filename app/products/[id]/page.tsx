@@ -66,11 +66,7 @@ const getCachedProductTitle = nextCache(getProductTitle, ["product-title"], {
   tags: ["product-title", "xxx"],
 });
 
-export async function generateMedatData({
-  params,
-}: {
-  params: { id: string };
-}) {
+export async function generateMetadata({ params }: { params: { id: string } }) {
   const product = await getCachedProductTitle(Number(params.id));
 
   return { title: product?.title ?? "" };
