@@ -24,7 +24,9 @@ async function getInitialProducts() {
   return products;
 }
 
-const getCacheProducts = nextCache(getInitialProducts, ["home-products"]);
+const getCacheProducts = nextCache(getInitialProducts, ["home-products"], {
+  revalidate: 60,
+});
 
 export const metadata = {
   title: "Home",
