@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { unstable_cache as nextCache, revalidatePath } from "next/cache";
+import {
+  /*  unstable_cache as nextCache,  */ revalidatePath,
+} from "next/cache";
 
 import ProductList from "@/components/ProductList";
 import db from "@/lib/db";
@@ -24,7 +26,7 @@ async function getInitialProducts() {
   return products;
 }
 
-const getCacheProducts = nextCache(getInitialProducts, ["home-products"]);
+// const getCacheProducts = nextCache(getInitialProducts, ["home-products"]);
 
 export const metadata = {
   title: "Home",
@@ -34,8 +36,11 @@ export type InitialProducts = Prisma.PromiseReturnType<
   typeof getInitialProducts
 >;
 
+// export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
 export default async function Products() {
-  const initialProducts = await getCacheProducts();
+  const initialProducts = await getInitialProducts();
 
   const revalidate = async () => {
     "use server";

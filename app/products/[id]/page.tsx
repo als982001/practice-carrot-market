@@ -59,11 +59,11 @@ const getProductTitle = async (id: number) => {
 };
 
 const getCachedProduct = nextCache(getProduct, ["product-detail"], {
-  tags: ["product-detail", "xxx"],
+  tags: ["product-detail"],
 });
 
 const getCachedProductTitle = nextCache(getProductTitle, ["product-title"], {
-  tags: ["product-title", "xxx"],
+  tags: ["product-title"],
 });
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
@@ -95,7 +95,7 @@ export default async function ProductDetail({
   const revalidate = async () => {
     "use server";
 
-    revalidateTag("xxx");
+    revalidateTag("product-detail");
   };
 
   return (
