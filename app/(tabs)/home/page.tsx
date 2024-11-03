@@ -1,8 +1,12 @@
+import Link from "next/link";
+import {
+  /*  unstable_cache as nextCache,  */ revalidatePath,
+} from "next/cache";
+
 import ProductList from "@/components/ProductList";
 import db from "@/lib/db";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { Prisma } from "@prisma/client";
-import Link from "next/link";
 
 async function getInitialProducts() {
   const products = await db.product.findMany({
@@ -22,15 +26,33 @@ async function getInitialProducts() {
   return products;
 }
 
+// const getCacheProducts = nextCache(getInitialProducts, ["home-products"]);
+
+export const metadata = {
+  title: "Home",
+};
+
 export type InitialProducts = Prisma.PromiseReturnType<
   typeof getInitialProducts
 >;
 
+// export const dynamic = "force-dynamic";
+// export const revalidate = 60;
+
 export default async function Products() {
   const initialProducts = await getInitialProducts();
 
+  const revalidate = async () => {
+    "use server";
+
+    revalidatePath("/home");
+  };
+
   return (
     <div className="p-5 flex flex-col gap-5">
+      <form action={revalidate}>
+        <button>Revalidate</button>
+      </form>
       <p>Product!</p>
       <div>
         <ProductList initialProducts={initialProducts} />

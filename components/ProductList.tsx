@@ -16,7 +16,11 @@ export default function ProductList({ initialProducts }: ProductListProps) {
 
   const [products, setProducts] = useState(initialProducts);
   const [page, setPage] = useState(0);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLastPage, setIsLastPage] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
 
   const trigger = useRef<HTMLSpanElement>(null);
@@ -67,14 +71,14 @@ export default function ProductList({ initialProducts }: ProductListProps) {
       {products.map((product) => (
         <Product key={product.id} {...product} useCloudFlare={useCloudFlare} />
       ))}
-      {isLastPage ? null : (
+      {/* {isLastPage ? null : (
         <span
           ref={trigger}
           className="text-sm font-semibold bg-orange-500 w-fit mx-auto px-3 py-2 rounded-md hover:opacity-90 active:scale-95"
         >
           {isLoading ? "로딩 중" : "Load more"}
         </span>
-      )}
+      )} */}
     </div>
   );
 }
