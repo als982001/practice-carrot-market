@@ -4,7 +4,7 @@ import Link from "next/link";
 import { unstable_cache as nextCache, revalidateTag } from "next/cache";
 
 import db from "@/lib/db";
-// import getSession from "@/lib/session";
+import getSession from "@/lib/session";
 import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
 
@@ -21,14 +21,12 @@ const funcForCommit = async () => {
 
 async function getIsOwner(userId: number) {
   // getSession은 쿠키를 이용 -> 쿠키 이용할 경우 dynamic routing
-  /*
+
   const session = await getSession();
 
   if (session.id) {
     return session.id === userId;
   }
-  */
-  userId;
 
   return false;
 }
@@ -164,6 +162,9 @@ export default async function ProductDetail({
   );
 }
 
+/*
+export const dynamicParams = true; // true가 기본값
+
 export async function generateStaticParams() {
   const products = await db.product.findMany({
     select: {
@@ -173,3 +174,4 @@ export async function generateStaticParams() {
 
   return products.map((product) => ({ id: String(product.id) }));
 }
+*/
