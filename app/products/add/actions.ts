@@ -23,6 +23,7 @@ const productSchema = z.object({
   }),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function uploadProduct(prevState: any, formData: FormData) {
   const data = {
     photo: formData.get("photo"),

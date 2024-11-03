@@ -16,7 +16,11 @@ export default function ProductList({ initialProducts }: ProductListProps) {
 
   const [products, setProducts] = useState(initialProducts);
   const [page, setPage] = useState(0);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLastPage, setIsLastPage] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
 
   const trigger = useRef<HTMLSpanElement>(null);

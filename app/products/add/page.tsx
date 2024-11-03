@@ -79,6 +79,7 @@ export default function AddProduct() {
   };
 
   // CloudFlare 관련 함수
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const interceptAction = async (_: any, formData: FormData) => {
     const file = formData.get("photo");
 
