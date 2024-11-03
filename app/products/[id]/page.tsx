@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { unstable_cache as nextCache, revalidateTag } from "next/cache";
+// import { unstable_cache as nextCache, revalidateTag } from "next/cache";
 
 import db from "@/lib/db";
 import getSession from "@/lib/session";
@@ -60,6 +60,7 @@ const getProductTitle = async (id: number) => {
   return product;
 };
 
+/*
 const getCachedProduct = nextCache(getProduct, ["product-detail"], {
   tags: ["product-detail"],
 });
@@ -67,9 +68,10 @@ const getCachedProduct = nextCache(getProduct, ["product-detail"], {
 const getCachedProductTitle = nextCache(getProductTitle, ["product-title"], {
   tags: ["product-title"],
 });
+*/
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const product = await getCachedProductTitle(Number(params.id));
+  const product = await getProductTitle(Number(params.id));
 
   return { title: product?.title ?? "" };
 }
@@ -86,7 +88,7 @@ export default async function ProductDetail({
     return notFound();
   }
 
-  const product = await getCachedProduct(id);
+  const product = await getProduct(id);
 
   if (!product) {
     return notFound();
@@ -94,11 +96,11 @@ export default async function ProductDetail({
 
   const isOwner = await getIsOwner(product.userId);
 
-  const revalidate = async () => {
+  /*   const revalidate = async () => {
     "use server";
 
     revalidateTag("product-detail");
-  };
+  }; */
 
   return (
     <div className="pb-40">
@@ -139,18 +141,18 @@ export default async function ProductDetail({
         <span className="font-semibold text-xl">
           {formatToWon(product.price)}원
         </span>
-        {/* {isOwner ? (
+        {isOwner ? (
           <button className="bg-red-500 px-5 py-2.5 rounded-md text-white font-semibold">
             Delete product
           </button>
-        ) : null} */}
-        {isOwner ? (
+        ) : null}
+        {/*  {isOwner ? (
           <form action={revalidate}>
             <button className="bg-red-500 px-5 py-2.5 rounded-md text-white font-semibold">
               Revalidate title cache
             </button>
           </form>
-        ) : null}
+        ) : null} */}
         <Link
           className="bg-orange-500 px-5 py-2.5 rounded-md text-white font-semibold"
           href={``}
