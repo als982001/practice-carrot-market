@@ -68,6 +68,10 @@ export default function AddProduct() {
     setPreview(url);
     setFile(file);
 
+    if (!useCloudFlare) {
+      return;
+    }
+
     const { success, result } = await getUploadUrl();
 
     if (success) {

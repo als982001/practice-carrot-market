@@ -1,14 +1,14 @@
 import Link from "next/link";
-import {
-  /*  unstable_cache as nextCache,  */ revalidatePath,
-} from "next/cache";
+import { unstable_cache as nextCache, revalidateTag } from "next/cache";
 
 import ProductList from "@/components/ProductList";
 import db from "@/lib/db";
-import { PlusIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { Prisma } from "@prisma/client";
 
 async function getInitialProducts() {
+  console.log("get Initial Products!!!");
+
   const products = await db.product.findMany({
     select: {
       title: true,
@@ -26,7 +26,9 @@ async function getInitialProducts() {
   return products;
 }
 
-// const getCacheProducts = nextCache(getInitialProducts, ["home-products"]);
+const getCacheProducts = nextCache(getInitialProducts, ["home-products"], {
+  tags: ["initial-products"],
+});
 
 export const metadata = {
   title: "Home",
@@ -37,23 +39,27 @@ export type InitialProducts = Prisma.PromiseReturnType<
 >;
 
 // export const dynamic = "force-dynamic";
-// export const revalidate = 60;
+// export const revalidate = 5;
 
 export default async function Products() {
-  const initialProducts = await getInitialProducts();
+  const initialProducts = await getCacheProducts();
 
   const revalidate = async () => {
     "use server";
 
-    revalidatePath("/home");
+    revalidateTag("initial-products");
   };
 
   return (
     <div className="p-5 flex flex-col gap-5">
-      <form action={revalidate}>
-        <button>Revalidate</button>
-      </form>
-      <p>Product!</p>
+      <div className="flex justify-between items-center">
+        <span>Products</span>
+        <form action={revalidate}>
+          <button>
+            <ArrowPathIcon className="size-7" />
+          </button>
+        </form>
+      </div>
       <div>
         <ProductList initialProducts={initialProducts} />
         <Link
