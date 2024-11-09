@@ -55,10 +55,10 @@ model Post {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId  Int
-  Comment Comment[]
-  Like    Like[]
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   Int
+  comments Comment[]
+  likes    Like[]
 }
 
 model Comment {
