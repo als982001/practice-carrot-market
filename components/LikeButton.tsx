@@ -19,6 +19,8 @@ export default function LikeButton({
 }: LikeButtonProps) {
   const [state, reducerFn] = useOptimistic(
     { isLiked, likeCount },
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (previousState, payload) => ({
       isLiked: !previousState.isLiked,
       likeCount: previousState.isLiked
@@ -49,11 +51,7 @@ export default function LikeButton({
       ) : (
         <OutlineHandThumbUpIcon className="size-5" />
       )}
-      {state.isLiked ? (
-        <span> {state.likeCount}</span>
-      ) : (
-        <span>공감하기 ({state.likeCount})</span>
-      )}
+      <span>{`좋아요! ${state.likeCount}`}</span>
     </button>
   );
 }

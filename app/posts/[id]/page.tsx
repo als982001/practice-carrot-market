@@ -43,11 +43,33 @@ async function getPost(id: number) {
   }
 }
 
+const getLikeCount = async (postId: number) => {
+  try {
+    const likeCount = await db.like.count({
+      where: {
+        postId,
+      },
+    });
+
+    return likeCount;
+  } catch (e) {
+    console.error(e);
+
+    return 0;
+  }
+};
+
 const getCachedPost = nextCache(getPost, ["post-detail"], {
   tags: ["post-detail"],
   revalidate: 60,
 });
 
+const getCachedLikeCount = nextCache(getLikeCount, ["post-detail-like-count"], {
+  tags: ["post-detail-like-count"],
+  revalidate: 60,
+});
+
+/*
 async function getLikeStatus(postId: number) {
   const session = await getSession();
 
@@ -72,6 +94,7 @@ async function getLikeStatus(postId: number) {
   };
 }
 
+
 // 몬가 문제가 있음
 function getCachedLikeStatus(postId: number) {
   const cachedOperation = nextCache(getLikeStatus, ["product-like-status"], {
@@ -80,6 +103,7 @@ function getCachedLikeStatus(postId: number) {
 
   return cachedOperation(postId);
 }
+*/
 
 async function getIsLiked(postId: number) {
   const session = await getSession();
@@ -114,6 +138,7 @@ export default async function PostDetail({
   }
 
   const isLiked = await getIsLiked(id);
+  const likeCount = await getCachedLikeCount(id);
 
   return (
     <div className="p-5 text-white">
@@ -139,7 +164,7 @@ export default async function PostDetail({
           <EyeIcon className="size-5" />
           <span>조회 {post.views}</span>
         </div>
-        <LikeButton isLiked={isLiked} likeCount={5} postId={id} />
+        <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
       </div>
     </div>
   );

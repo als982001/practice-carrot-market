@@ -16,6 +16,7 @@ export const likePost = async (postId: number) => {
     });
 
     revalidateTag(`like-status-${postId}`);
+    revalidateTag("post-detail-like-count");
   } catch (e) {
     console.error(e);
   }
@@ -35,6 +36,7 @@ export const dislikePost = async (postId: number) => {
     });
 
     revalidateTag(`like-status-${postId}`);
+    revalidateTag("post-detail-like-count");
   } catch (e) {
     console.error(e);
   }
