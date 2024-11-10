@@ -1,27 +1,32 @@
 import { CommentsType } from "@/app/posts/[id]/page";
 import PostComment from "./PostComment";
+import CommentForm from "./CommentForm";
 
 interface IProps {
   comments: CommentsType;
+  postId: number;
 }
 
-export default function PostComments({ comments }: IProps) {
+export default function PostComments({ comments, postId }: IProps) {
   return (
-    <div className="mt-8">
-      {comments.length > 0 ? (
-        <>
-          {comments.map((comment) => (
-            <div
-              key={comment.id}
-              className="flex content-start min-h-10 gap-2 border-b border-neutral-500 last:border-b-0"
-            >
-              <PostComment comment={comment} />
-            </div>
-          ))}
-        </>
-      ) : (
-        <div>작성된 댓글이 없습니다.</div>
-      )}
-    </div>
+    <>
+      <div className="mt-8">
+        {comments.length > 0 ? (
+          <>
+            {comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="flex content-start min-h-10 gap-2 border-b border-neutral-500 last:border-b-0"
+              >
+                <PostComment comment={comment} />
+              </div>
+            ))}
+          </>
+        ) : (
+          <div>작성된 댓글이 없습니다.</div>
+        )}
+      </div>
+      <CommentForm postId={postId} />
+    </>
   );
 }

@@ -203,7 +203,7 @@ export default async function PostDetail({
         </div>
         <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
       </div>
-      <PostComments comments={comments} />
+      <PostComments comments={comments} postId={id} />
     </div>
   );
 }
