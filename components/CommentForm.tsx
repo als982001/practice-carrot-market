@@ -1,6 +1,7 @@
 "use client";
 
 import { handlePostComment } from "@/app/(tabs)/life/action";
+import { useState } from "react";
 import { useFormState } from "react-dom";
 
 interface IProps {
@@ -8,9 +9,18 @@ interface IProps {
 }
 
 export default function CommentForm({ postId }: IProps) {
+  const [comment, setComment] = useState<string>("");
+
   const [state, dispatch] = useFormState(
-    (prevState: any, formData: FormData) =>
-      handlePostComment(prevState, formData, postId),
+    async (prevState: any, formData: FormData) => {
+      const result = await handlePostComment(prevState, formData, postId);
+
+      if (!result) {
+        setComment("");
+      }
+
+      return result;
+    },
     null
   );
 
@@ -21,7 +31,9 @@ export default function CommentForm({ postId }: IProps) {
           placeholder="댓글을 작성하세요."
           name="comment"
           type="text"
-          // required
+          required
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
           style={{
             color: "black",
             width: "calc(100% - 108px)",

@@ -67,4 +67,6 @@ export async function handlePostComment(
   });
 
   revalidateTag("post-comments");
+
+  return error;
 }
