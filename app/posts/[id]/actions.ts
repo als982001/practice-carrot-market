@@ -1,8 +1,9 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
+
 import db from "@/lib/db";
 import getSession from "@/lib/session";
-import { revalidateTag } from "next/cache";
 
 export const likePost = async (postId: number) => {
   const session = await getSession();
