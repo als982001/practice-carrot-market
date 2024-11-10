@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export function formatToTimeAgo(date: string): string {
   const dayInMs = 1000 * 60 * 60 * 24;
 
@@ -32,3 +34,7 @@ export const checkValidImage = (file: File) => {
 
   return true;
 };
+
+export function getDate(date: Date) {
+  return dayjs(date).format("YYYY-MM-DD HH:mm");
+}

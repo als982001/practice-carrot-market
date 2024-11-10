@@ -7,6 +7,8 @@ import getSession from "@/lib/session";
 import { formatToTimeAgo } from "@/lib/utils";
 import { EyeIcon } from "@heroicons/react/24/solid";
 import LikeButton from "@/components/LikeButton";
+import { Prisma } from "@prisma/client";
+import PostComments from "@/components/PostComments";
 
 async function getPost(id: number) {
   try {
@@ -57,16 +59,6 @@ const getLikeCount = async (postId: number) => {
     return 0;
   }
 };
-
-const getCachedPost = nextCache(getPost, ["post-detail"], {
-  tags: ["post-detail"],
-  revalidate: 60,
-});
-
-const getCachedLikeCount = nextCache(getLikeCount, ["post-detail-like-count"], {
-  tags: ["post-detail-like-count"],
-  revalidate: 60,
-});
 
 /*
 async function getLikeStatus(postId: number) {
@@ -119,6 +111,51 @@ async function getIsLiked(postId: number) {
   return Boolean(like);
 }
 
+async function getComments(postId: number) {
+  try {
+    const comments = await db.comment.findMany({
+      where: {
+        postId,
+      },
+      include: {
+        user: {
+          select: {
+            username: true,
+            avatar: true,
+          },
+        },
+      },
+      /* select: {
+        id: true,
+        payload: true,
+        user: {
+          select: {
+            username: true,
+            avatar: true,
+          },
+        },
+      }, */
+    });
+
+    return comments;
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
+
+export type CommentsType = Prisma.PromiseReturnType<typeof getComments>;
+
+const getCachedPost = nextCache(getPost, ["post-detail"], {
+  tags: ["post-detail"],
+  revalidate: 60,
+});
+
+const getCachedLikeCount = nextCache(getLikeCount, ["post-detail-like-count"], {
+  tags: ["post-detail-like-count"],
+  revalidate: 60,
+});
+
 export default async function PostDetail({
   params,
 }: {
@@ -138,6 +175,7 @@ export default async function PostDetail({
 
   const isLiked = await getIsLiked(id);
   const likeCount = await getCachedLikeCount(id);
+  const comments = await getComments(id);
 
   return (
     <div className="p-5 text-white">
@@ -165,6 +203,7 @@ export default async function PostDetail({
         </div>
         <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
       </div>
+      <PostComments comments={comments} />
     </div>
   );
 }
