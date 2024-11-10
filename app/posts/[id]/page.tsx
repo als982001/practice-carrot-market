@@ -156,6 +156,11 @@ const getCachedLikeCount = nextCache(getLikeCount, ["post-detail-like-count"], {
   revalidate: 60,
 });
 
+const getCachedComments = nextCache(getComments, ["post-comments"], {
+  tags: ["post-comments"],
+  revalidate: 60,
+});
+
 export default async function PostDetail({
   params,
 }: {

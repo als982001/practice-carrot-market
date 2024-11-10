@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import db from "@/lib/db";
 import getSession from "@/lib/session";
+import { revalidateTag } from "next/cache";
 
 const checkNoComment = (comment: string) => {
   return comment.length > 0;
@@ -64,4 +65,6 @@ export async function handlePostComment(
       },
     },
   });
+
+  revalidateTag("post-comments");
 }
