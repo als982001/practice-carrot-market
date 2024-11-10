@@ -1,5 +1,7 @@
+import db from "@/lib/db";
 import { getDate } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
+import { revalidateTag } from "next/cache";
 import Image from "next/image";
 
 interface IProps {
@@ -16,14 +18,31 @@ interface IProps {
     postId: number;
     payload: string;
   };
+  postId: number;
 }
 
-export default function PostComment({ comment }: IProps) {
+export default function PostComment({ comment, postId }: IProps) {
   const {
     user: { username, avatar },
     created_at: createdAt,
     payload,
   } = comment;
+
+  const deleteComment = async () => {
+    "use server";
+
+    try {
+      await db.comment.delete({
+        where: {
+          id: comment.id,
+        },
+      });
+
+      revalidateTag("post-comments");
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <>
@@ -50,7 +69,12 @@ export default function PostComment({ comment }: IProps) {
           width: "100%",
         }}
       >
-        <div>{payload}</div>
+        <div className="flex items-center justify-between px-2">
+          <p>{payload}</p>
+          <form action={deleteComment}>
+            <button>x</button>
+          </form>
+        </div>
         <span style={{ fontSize: "10px" }}>{getDate(createdAt)}</span>
       </div>
     </>
