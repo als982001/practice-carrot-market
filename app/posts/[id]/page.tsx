@@ -1,13 +1,14 @@
-import { unstable_cache as nextCache, revalidateTag } from "next/cache";
+import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { formatToTimeAgo } from "@/lib/utils";
-import { EyeIcon, HandThumbUpIcon } from "@heroicons/react/24/solid";
-import { HandThumbUpIcon as OutlineHandThumbUpIcon } from "@heroicons/react/24/outline";
+import { EyeIcon } from "@heroicons/react/24/solid";
 import LikeButton from "@/components/LikeButton";
+import { Prisma } from "@prisma/client";
+import PostComments from "@/components/PostComments";
 
 async function getPost(id: number) {
   try {
@@ -58,16 +59,6 @@ const getLikeCount = async (postId: number) => {
     return 0;
   }
 };
-
-const getCachedPost = nextCache(getPost, ["post-detail"], {
-  tags: ["post-detail"],
-  revalidate: 60,
-});
-
-const getCachedLikeCount = nextCache(getLikeCount, ["post-detail-like-count"], {
-  tags: ["post-detail-like-count"],
-  revalidate: 60,
-});
 
 /*
 async function getLikeStatus(postId: number) {
@@ -120,6 +111,16 @@ async function getIsLiked(postId: number) {
   return Boolean(like);
 }
 
+const getCachedPost = nextCache(getPost, ["post-detail"], {
+  tags: ["post-detail"],
+  revalidate: 60,
+});
+
+const getCachedLikeCount = nextCache(getLikeCount, ["post-detail-like-count"], {
+  tags: ["post-detail-like-count"],
+  revalidate: 60,
+});
+
 export default async function PostDetail({
   params,
 }: {
@@ -166,6 +167,7 @@ export default async function PostDetail({
         </div>
         <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
       </div>
+      <PostComments postId={id} />
     </div>
   );
 }
