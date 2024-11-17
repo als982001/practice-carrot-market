@@ -12,6 +12,8 @@ interface IProps {
   initialMessages: InitialChatMessages;
   userId: number;
   chatRoomId?: string;
+  username: string;
+  avatar: string | null;
   SUPABASE_PUBLIC_KEY: string;
   SUPABASE_URL: string;
 }
@@ -20,6 +22,8 @@ export default function ChatMessagesList({
   initialMessages,
   userId,
   chatRoomId,
+  username,
+  avatar,
   SUPABASE_PUBLIC_KEY,
   SUPABASE_URL,
 }: IProps) {
@@ -56,7 +60,16 @@ export default function ChatMessagesList({
     channel.current?.send({
       type: "broadcast",
       event: "message",
-      payload: { message },
+      payload: {
+        id: Date.now(),
+        payload: message,
+        created_at: new Date(),
+        userId,
+        user: {
+          username,
+          avatar,
+        },
+      },
     });
 
     setMessage("");
@@ -67,9 +80,15 @@ export default function ChatMessagesList({
 
     channel.current = client.channel(`room-${chatRoomId}`);
 
-    channel.current.on("broadcast", { event: "messaage" }, (payload) =>
-      console.log(payload)
-    );
+    channel.current
+      .on("broadcast", { event: "messaage" }, (payload) =>
+        setMessages((prevMsgs) => [...prevMsgs, payload.payload])
+      )
+      .subscribe();
+
+    return () => {
+      channel.current?.unsubscribe();
+    };
   }, [chatRoomId]);
 
   return (
