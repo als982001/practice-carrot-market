@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 // import { unstable_cache as nextCache, revalidateTag } from "next/cache";
@@ -81,7 +81,7 @@ export default async function ProductDetail({
 }: {
   params: { id: string };
 }) {
-  const useCloudFlare = false;
+  // const useCloudFlare = false;
   const id = Number(params.id);
 
   if (isNaN(id)) {
@@ -101,6 +101,22 @@ export default async function ProductDetail({
 
     revalidateTag("product-detail");
   }; */
+
+  const createChatRoom = async () => {
+    "use server";
+    const session = await getSession();
+
+    const room = await db.chatRoom.create({
+      data: {
+        users: {
+          connect: [{ id: product.userId }, { id: session.id }],
+        },
+      },
+      select: { id: true },
+    });
+
+    redirect(`/chats/${room.id}`);
+  };
 
   return (
     <div className="pb-40">
@@ -156,12 +172,11 @@ export default async function ProductDetail({
             </button>
           </form>
         ) : null} */}
-        <Link
-          className="bg-orange-500 px-5 py-2.5 rounded-md text-white font-semibold"
-          href={``}
-        >
-          채팅하기
-        </Link>
+        <form action={createChatRoom}>
+          <button className="bg-orange-500 px-5 py-2.5 rounded-md text-white font-semibold">
+            채팅하기
+          </button>
+        </form>
       </div>
     </div>
   );
