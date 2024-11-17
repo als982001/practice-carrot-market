@@ -108,11 +108,7 @@ export default async function ProductDetail({
         <Image
           className="object-cover"
           fill
-          src={
-            useCloudFlare
-              ? `${product.photo}/width=500,height=500`
-              : product.photo
-          }
+          src={product.photo}
           alt={product.title}
         />
       </div>
