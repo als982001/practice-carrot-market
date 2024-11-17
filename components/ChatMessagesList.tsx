@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 import { InitialChatMessages } from "@/app/chats/[id]/page";
 import { formatToTimeAgo } from "@/lib/utils";
 import { ArrowUpCircleIcon } from "@heroicons/react/24/solid";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 
 interface IProps {
   initialMessages: InitialChatMessages;
@@ -25,6 +25,7 @@ export default function ChatMessagesList({
 }: IProps) {
   const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
+  const channel = useRef<RealtimeChannel>();
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -52,15 +53,21 @@ export default function ChatMessagesList({
       },
     ]);
 
+    channel.current?.send({
+      type: "broadcast",
+      event: "message",
+      payload: { message },
+    });
+
     setMessage("");
   };
 
   useEffect(() => {
     const client = createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
 
-    const channel = client.channel(`room-${chatRoomId}`);
+    channel.current = client.channel(`room-${chatRoomId}`);
 
-    channel.on("broadcast", { event: "messaage" }, (payload) =>
+    channel.current.on("broadcast", { event: "messaage" }, (payload) =>
       console.log(payload)
     );
   }, [chatRoomId]);
