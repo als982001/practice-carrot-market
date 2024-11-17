@@ -65,6 +65,11 @@ export default async function ChatRoom({ params }: { params: { id: string } }) {
   const session = await getSession();
 
   return (
-    <ChatMessagesList userId={session.id!} initialMessages={initialMessages} />
+    <ChatMessagesList
+      userId={session.id!}
+      initialMessages={initialMessages}
+      SUPABASE_PUBLIC_KEY={process.env.SUPABASE_PUBLIC_KEY ?? ""}
+      SUPABASE_URL={process.env.SUPABASE_URL ?? ""}
+    />
   );
 }
