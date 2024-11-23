@@ -1,5 +1,6 @@
-import TabBar from "@/components/TabBar";
 import React from "react";
+
+import TabBar from "@/components/TabBar";
 
 export default function TabLayout({ children }: { children: React.ReactNode }) {
   return (

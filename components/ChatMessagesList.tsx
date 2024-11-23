@@ -82,7 +82,7 @@ export default function ChatMessagesList({
     channel.current = client.channel(`room-${chatRoomId}`);
 
     channel.current
-      .on("broadcast", { event: "messaage" }, (payload) =>
+      .on("broadcast", { event: "message" }, (payload) =>
         setMessages((prevMsgs) => [...prevMsgs, payload.payload])
       )
       .subscribe();
