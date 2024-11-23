@@ -14,8 +14,6 @@ interface IProps {
   chatRoomId?: string;
   username: string;
   avatar: string | null;
-  SUPABASE_PUBLIC_KEY: string;
-  SUPABASE_URL: string;
 }
 
 export default function ChatMessagesList({
@@ -24,8 +22,6 @@ export default function ChatMessagesList({
   chatRoomId,
   username,
   avatar,
-  SUPABASE_PUBLIC_KEY,
-  SUPABASE_URL,
 }: IProps) {
   const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
@@ -76,7 +72,10 @@ export default function ChatMessagesList({
   };
 
   useEffect(() => {
-    const client = createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+    const client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY!
+    );
 
     channel.current = client.channel(`room-${chatRoomId}`);
 
