@@ -7,6 +7,7 @@ import { InitialChatMessages } from "@/app/chats/[id]/page";
 import { formatToTimeAgo } from "@/lib/utils";
 import { ArrowUpCircleIcon } from "@heroicons/react/24/solid";
 import { createClient, RealtimeChannel } from "@supabase/supabase-js";
+import { saveMessage } from "@/app/chats/actions";
 
 interface IProps {
   initialMessages: InitialChatMessages;
@@ -35,7 +36,7 @@ export default function ChatMessagesList({
     setMessage(value);
   };
 
-  const onSubmit = (event: React.FormEvent) => {
+  const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     // alert(message);
 
@@ -68,6 +69,7 @@ export default function ChatMessagesList({
       },
     });
 
+    chatRoomId && (await saveMessage({ payload: message, chatRoomId }));
     setMessage("");
   };
 
