@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { formatToTimeAgo, formatToWon } from "@/lib/utils";
-import React from "react";
+import ProductModalButton from "./ProductModalButton";
 
 interface IProps {
   title: string;
@@ -20,10 +20,6 @@ export default function Product({
   photo,
   id,
 }: IProps) {
-  const handleButtonClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-  };
-
   return (
     <Link href={`products/${id}`} className="flex gap-5">
       <div className="relative size-28 rounded-md overflow-hidden">
@@ -37,7 +33,7 @@ export default function Product({
           </span>
           <span className="text-l4g font-semibold">{formatToWon(price)}</span>
         </div>
-        <button onClick={handleButtonClick}>요약해서 보기</button>
+        <ProductModalButton id={id} />
       </div>
     </Link>
   );
