@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import db from "@/lib/db";
+import { getProduct } from "@/lib/product";
 
 interface IProps {
   id: number;
@@ -12,29 +12,6 @@ export default function ProductModal({ id, handleShoWModal }: IProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [product, setProduct] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  async function getProduct(id: number) {
-    try {
-      const product = await db.product.findUnique({
-        where: {
-          id,
-        },
-        include: {
-          user: {
-            select: {
-              username: true,
-              avatar: true,
-            },
-          },
-        },
-      });
-
-      return product;
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-  }
 
   useEffect(() => {
     (async () => {
@@ -61,10 +38,24 @@ export default function ProductModal({ id, handleShoWModal }: IProps) {
   }
 
   if (!product) {
-    return <div>없음</div>;
+    return (
+      <div
+        className="absolute w-full h-full z-50 flex items-center justify-center bg-black bg-opacity-60 left-0 top-0"
+        onClick={handleShoWModal}
+      >
+        없음 ㅋ
+      </div>
+    );
   }
 
   console.log(product);
 
-  return <div>{`id: ${id}`}</div>;
+  return (
+    <div
+      className="absolute w-full h-full z-50 flex items-center justify-center bg-black bg-opacity-60 left-0 top-0"
+      onClick={handleShoWModal}
+    >
+      <div>{`id: ${id}, title: ${product.title}`}</div>
+    </div>
+  );
 }
