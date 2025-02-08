@@ -112,7 +112,7 @@ export default function EditForm({ product }: IProps) {
         {!selectedFile && (
           <input type="hidden" name="existingPhoto" value={product.photo} />
         )}
-        <input type="hidden" name="productId" value={productId} />
+        <input name="productId" value={productId} readOnly />
         <Input
           required
           placeholder="제목"
