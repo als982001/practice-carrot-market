@@ -140,3 +140,64 @@ export async function getUploadUrl() {
 
   return data;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function updateProduct(prevState: any, formData: FormData) {
+  const data = {
+    photo: formData.get("photo"),
+    existingPhoto: formData.get("existingPhoto"),
+    title: formData.get("title"),
+    price: formData.get("price"),
+    description: formData.get("description"),
+  };
+
+  const productId = Number(formData.get("productId"));
+
+  const dataPhotoName = data.photo instanceof File ? data.photo.name : "";
+
+  const isUsingExistingPhoto = dataPhotoName === "undefined";
+
+  if (isUsingExistingPhoto) {
+    data.photo = data.existingPhoto;
+  } else if (data.photo instanceof File) {
+    const photoData = await data.photo.arrayBuffer();
+
+    await fs.appendFile(`./public/${data.photo.name}`, Buffer.from(photoData));
+    data.photo = `/${data.photo.name}`;
+  }
+
+  const result = productSchema.safeParse(data);
+
+  if (!result.success) {
+    return result.error.flatten();
+  }
+
+  const session = await getSession();
+
+  if (session.id) {
+    const product = await db.product.update({
+      where: {
+        id: Number(productId),
+      },
+      data: {
+        title: result.data.title,
+        description: result.data.description,
+        price: result.data.price,
+        photo: result.data.photo,
+        user: {
+          connect: {
+            id: session.id,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    revalidateTag("initial-products");
+    revalidatePath("/home");
+
+    redirect(`/products/${product.id}`);
+  }
+}
