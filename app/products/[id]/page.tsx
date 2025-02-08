@@ -7,6 +7,7 @@ import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
+import { revalidatePath } from "next/cache";
 
 /*
 const funcForCommit = async () => {
@@ -130,6 +131,7 @@ export default async function ProductDetail({
     } catch (error) {
       console.error(error);
     } finally {
+      revalidatePath("/home");
       redirect("/home");
     }
   };
