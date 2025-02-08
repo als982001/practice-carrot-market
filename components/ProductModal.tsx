@@ -66,7 +66,7 @@ export default function ProductModal({ id, handleShoWModal }: IProps) {
 
   return (
     <div
-      className="absolute w-full h-full z-50 flex items-center justify-center bg-black bg-opacity-60 left-0 top-0"
+      className="fixed w-full h-full z-50 flex items-center justify-center bg-black bg-opacity-60 left-0 top-0"
       onClick={handleShoWModal}
     >
       <div className="max-w-screen-sm h-1/2  flex justify-center w-full">

@@ -3,8 +3,9 @@ import { unstable_cache as nextCache, revalidateTag } from "next/cache";
 
 import ProductList from "@/components/ProductList";
 import db from "@/lib/db";
-import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { PlusIcon } from "@heroicons/react/24/solid";
 import { Prisma } from "@prisma/client";
+import RevalidateInitialProductsButton from "@/components/RevalidateInitialProductsButton";
 
 async function getInitialProducts() {
   console.log("get Initial Products!!!");
@@ -44,21 +45,19 @@ export type InitialProducts = Prisma.PromiseReturnType<
 export default async function Products() {
   const initialProducts = await getCacheProducts();
 
-  const revalidate = async () => {
+  console.log(initialProducts);
+
+  /*   const revalidate = async () => {
     "use server";
 
     revalidateTag("initial-products");
   };
-
+ */
   return (
     <div className="p-5 flex flex-col gap-5">
       <div className="flex justify-between items-center">
         <span>Products</span>
-        <form action={revalidate}>
-          <button>
-            <ArrowPathIcon className="size-7" />
-          </button>
-        </form>
+        <RevalidateInitialProductsButton />
       </div>
       <div>
         <ProductList initialProducts={initialProducts} />

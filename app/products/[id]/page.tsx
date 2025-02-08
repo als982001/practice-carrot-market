@@ -118,6 +118,22 @@ export default async function ProductDetail({
     redirect(`/chats/${room.id}`);
   };
 
+  const deleteProduct = async () => {
+    "use server";
+
+    try {
+      await db.product.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      redirect("/home");
+    }
+  };
+
   return (
     <div className="pb-40">
       <div className="relative aspect-square">
@@ -131,7 +147,7 @@ export default async function ProductDetail({
       <div className="p-5 flex items-center justify-between border-b border-neutral-700">
         <div className="flex items-center gap-3">
           <div className="size-10 overflow-hidden rounded-full">
-            {product.user.avatar !== null ? (
+            {product.user.avatar ? (
               <Image
                 src={product.user.avatar}
                 width={40}
@@ -161,9 +177,11 @@ export default async function ProductDetail({
           {formatToWon(product.price)}원
         </span>
         {isOwner ? (
-          <button className="bg-red-500 px-5 py-2.5 rounded-md text-white font-semibold">
-            Delete product
-          </button>
+          <form action={deleteProduct}>
+            <button className="bg-red-500 px-5 py-2.5 rounded-md text-white font-semibold">
+              Delete product
+            </button>
+          </form>
         ) : null}
         {/*  {isOwner ? (
           <form action={revalidate}>
