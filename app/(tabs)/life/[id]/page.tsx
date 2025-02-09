@@ -1,6 +1,6 @@
 import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 
 import db from "@/lib/db";
@@ -145,6 +145,22 @@ export default async function PostDetail({
   const likeCount = await getCachedLikeCount(id);
   const isOwner = post.userId === session.id;
 
+  const deletePost = async () => {
+    "use server";
+
+    const session = await getSession();
+
+    try {
+      await db.post.delete({
+        where: { id: post.id },
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      redirect("/life");
+    }
+  };
+
   return (
     <div className="p-5 text-white">
       <div className="flex items-center gap-2 mb-2">
@@ -172,15 +188,27 @@ export default async function PostDetail({
         <div className="flex gap-5">
           <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
           {isOwner && (
-            <Link
-              className={
-                "flex items-center gap-2 text-neutral-400 text-sm border border-neutral-400 rounded-full p-2  transition-colors hover:bg-neutral-800"
-              }
-              href={`/life/${id}/edit`}
-            >
-              <PencilIcon className="size-5" />
-              수정
-            </Link>
+            <>
+              <Link
+                className={
+                  "flex items-center gap-2 text-neutral-400 text-sm border border-neutral-400 rounded-full p-2  transition-colors hover:bg-neutral-800"
+                }
+                href={`/life/${id}/edit`}
+              >
+                <PencilIcon className="size-5" />
+                수정
+              </Link>
+              <form action={deletePost}>
+                <button
+                  className={
+                    "flex items-center gap-2 text-neutral-400 text-sm border border-neutral-400 rounded-full p-2  transition-colors hover:bg-neutral-800"
+                  }
+                >
+                  <PencilIcon className="size-5" />
+                  삭제
+                </button>
+              </form>
+            </>
           )}
         </div>
       </div>
