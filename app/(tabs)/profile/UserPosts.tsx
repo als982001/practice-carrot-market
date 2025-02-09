@@ -32,11 +32,11 @@ export default function UserPosts({ posts }: IProps) {
 
   return (
     <div>
-      <button onClick={handleShoeProducts}>
+      <button className="mb-5" onClick={handleShoeProducts}>
         {showPosts ? "접기" : "펼치기"}
       </button>
       {showPosts && (
-        <div>
+        <div className="flex flex-col gap-2">
           {posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}

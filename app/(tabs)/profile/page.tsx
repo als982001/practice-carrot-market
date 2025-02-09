@@ -51,18 +51,20 @@ export default async function Profile() {
   console.log("posts", posts);
 
   return (
-    <div>
-      <Suspense fallback={"Welcome!"}>
-        <Username />
-      </Suspense>
-      <form action={logOut}>
-        <button>Log out</button>
-      </form>
-      <div>
+    <div className="p-5 flex flex-col gap-10 mb-52">
+      <div className="flex justify-between">
+        <Suspense fallback={"Welcome!"}>
+          <Username />
+        </Suspense>
+        <form action={logOut}>
+          <button>Log out</button>
+        </form>
+      </div>
+      <div className="flex flex-col gap-5">
         <div>올린 상품들</div>
         <UserProducts products={products} />
       </div>
-      <div>
+      <div className="flex flex-col gap-5">
         <div>작성한 게시물들</div>
         <UserPosts posts={posts} />
       </div>

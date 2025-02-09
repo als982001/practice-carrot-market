@@ -29,11 +29,11 @@ export default function UserProducts({ products }: IProps) {
 
   return (
     <div>
-      <button onClick={handleShoeProducts}>
+      <button className="mb-5" onClick={handleShoeProducts}>
         {showProducts ? "접기" : "펼치기"}
       </button>
       {showProducts && (
-        <div>
+        <div className="flex flex-col gap-2">
           {products.map((product) => (
             <Product key={product.id} {...product} />
           ))}
