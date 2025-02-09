@@ -2,7 +2,7 @@
 
 import { useOptimistic } from "react";
 
-import { dislikePost, likePost } from "@/app/posts/[id]/actions";
+import { dislikePost, likePost } from "@/app/(tabs)/life/[id]/actions";
 import { HandThumbUpIcon } from "@heroicons/react/24/solid";
 import { HandThumbUpIcon as OutlineHandThumbUpIcon } from "@heroicons/react/24/outline";
 

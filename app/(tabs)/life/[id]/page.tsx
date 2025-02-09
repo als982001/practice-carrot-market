@@ -1,13 +1,15 @@
 import { unstable_cache as nextCache } from "next/cache";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { formatToTimeAgo } from "@/lib/utils";
 import { EyeIcon } from "@heroicons/react/24/solid";
 import LikeButton from "@/components/LikeButton";
-import { Prisma } from "@prisma/client";
+import { PencilIcon } from "@heroicons/react/24/solid";
+
 import PostComments from "@/components/PostComments";
 
 async function getPost(id: number) {
@@ -133,6 +135,7 @@ export default async function PostDetail({
   }
 
   const post = await getCachedPost(id);
+  const session = await getSession();
 
   if (!post) {
     return notFound();
@@ -140,6 +143,7 @@ export default async function PostDetail({
 
   const isLiked = await getIsLiked(id);
   const likeCount = await getCachedLikeCount(id);
+  const isOwner = post.userId === session.id;
 
   return (
     <div className="p-5 text-white">
@@ -165,7 +169,20 @@ export default async function PostDetail({
           <EyeIcon className="size-5" />
           <span>조회 {post.views}</span>
         </div>
-        <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
+        <div className="flex gap-5">
+          <LikeButton isLiked={isLiked} likeCount={likeCount} postId={id} />
+          {isOwner && (
+            <Link
+              className={
+                "flex items-center gap-2 text-neutral-400 text-sm border border-neutral-400 rounded-full p-2  transition-colors hover:bg-neutral-800"
+              }
+              href={`/life/${id}/edit`}
+            >
+              <PencilIcon className="size-5" />
+              수정
+            </Link>
+          )}
+        </div>
       </div>
       <PostComments postId={id} />
     </div>
