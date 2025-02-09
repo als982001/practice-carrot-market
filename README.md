@@ -59,3 +59,25 @@ npm install
 # 개발 서버 실행
 npm run dev
 ```
+
+## 5. 기능 이미지 예시
+
+### 5-1. 상품 목록
+
+![스크린샷 2025-02-09 오후 4 49 22](https://github.com/user-attachments/assets/b805f294-0f0a-4a72-99d5-f7cf9fa9ff63)
+
+### 5-1-2. 상품 등록 및 수정 form
+
+![스크린샷 2025-02-09 오후 4 49 36](https://github.com/user-attachments/assets/84dc40f1-f874-4639-89ce-626dc1449dff)
+
+### 5-1-3. 게시물 목록
+
+![스크린샷 2025-02-09 오후 4 51 33](https://github.com/user-attachments/assets/d476bfb0-1a43-4c74-91cf-37edc38b71ec)
+
+### 5-1-4. 게시물 상세
+
+![스크린샷 2025-02-09 오후 4 49 58](https://github.com/user-attachments/assets/ef18a9cc-866b-4112-bff4-47d6c3a017e1)
+
+### 5-1-5. 마이 페이지
+
+![스크린샷 2025-02-09 오후 4 50 42](https://github.com/user-attachments/assets/71cb7ffa-6758-4be3-8b64-0eb42b2a616d)
