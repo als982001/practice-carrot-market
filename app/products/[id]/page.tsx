@@ -167,11 +167,13 @@ export default async function ProductDetail({
             <h3>{product.user.username}</h3>
           </div>
         </div>
-        <div>
-          <Link className="text-white" href={`/products/${id}/edit`}>
-            수정
-          </Link>
-        </div>
+        {isOwner && (
+          <div>
+            <Link className="text-white" href={`/products/${id}/edit`}>
+              수정
+            </Link>
+          </div>
+        )}
       </div>
       <div className="p-5">
         <h1 className="text-2xl font-semibold">{product.title}</h1>

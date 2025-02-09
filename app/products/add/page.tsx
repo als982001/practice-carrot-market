@@ -157,7 +157,8 @@ export default function AddProduct() {
   );
 
   return (
-    <div>
+    <div className="p-5">
+      <div className="ml-5">상품 등록</div>
       <form
         action={useCloudFlare && useRHF ? onValid : action}
         className="p-5 flex flex-col gap-5"
