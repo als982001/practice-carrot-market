@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { unstable_cache as nextCache, revalidateTag } from "next/cache";
+import { unstable_cache as nextCache } from "next/cache";
 
 import ProductList from "@/components/ProductList";
 import db from "@/lib/db";
