@@ -3,9 +3,10 @@ import getSession from "@/lib/session";
 import { destroyUserSession } from "@/utils/authUtils";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { getUserProducts } from "./actions";
+import { getUserPosts, getUserProducts } from "./actions";
 import Product from "@/components/Product";
 import UserProducts from "./UserProducts";
+import UserPosts from "./UserPosts";
 
 async function getUser() {
   const session = await getSession();
@@ -36,6 +37,7 @@ async function Username() {
 export default async function Profile() {
   const user = await getUser();
   const products = await getUserProducts(user.id);
+  const posts = await getUserPosts(user.id);
 
   const logOut = async () => {
     "use server";
@@ -46,6 +48,7 @@ export default async function Profile() {
   };
 
   console.log("products", products);
+  console.log("posts", posts);
 
   return (
     <div>
@@ -61,6 +64,7 @@ export default async function Profile() {
       </div>
       <div>
         <div>작성한 게시물들</div>
+        <UserPosts posts={posts} />
       </div>
     </div>
   );
