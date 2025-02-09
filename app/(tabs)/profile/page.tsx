@@ -3,6 +3,9 @@ import getSession from "@/lib/session";
 import { destroyUserSession } from "@/utils/authUtils";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
+import { getUserProducts } from "./actions";
+import Product from "@/components/Product";
+import UserProducts from "./UserProducts";
 
 async function getUser() {
   const session = await getSession();
@@ -32,8 +35,7 @@ async function Username() {
 
 export default async function Profile() {
   const user = await getUser();
-
-  console.log(user);
+  const products = await getUserProducts(user.id);
 
   const logOut = async () => {
     "use server";
@@ -43,6 +45,8 @@ export default async function Profile() {
     redirect("/");
   };
 
+  console.log("products", products);
+
   return (
     <div>
       <Suspense fallback={"Welcome!"}>
@@ -51,6 +55,13 @@ export default async function Profile() {
       <form action={logOut}>
         <button>Log out</button>
       </form>
+      <div>
+        <div>올린 상품들</div>
+        <UserProducts products={products} />
+      </div>
+      <div>
+        <div>작성한 게시물들</div>
+      </div>
     </div>
   );
 }
