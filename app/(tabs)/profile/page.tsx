@@ -3,6 +3,10 @@ import getSession from "@/lib/session";
 import { destroyUserSession } from "@/utils/authUtils";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
+import { getUserPosts, getUserProducts } from "./actions";
+import Product from "@/components/Product";
+import UserProducts from "./UserProducts";
+import UserPosts from "./UserPosts";
 
 async function getUser() {
   const session = await getSession();
@@ -32,8 +36,8 @@ async function Username() {
 
 export default async function Profile() {
   const user = await getUser();
-
-  console.log(user);
+  const products = await getUserProducts(user.id);
+  const posts = await getUserPosts(user.id);
 
   const logOut = async () => {
     "use server";
@@ -43,14 +47,27 @@ export default async function Profile() {
     redirect("/");
   };
 
+  console.log("products", products);
+  console.log("posts", posts);
+
   return (
-    <div>
-      <Suspense fallback={"Welcome!"}>
-        <Username />
-      </Suspense>
-      <form action={logOut}>
-        <button>Log out</button>
-      </form>
+    <div className="p-5 flex flex-col gap-10 mb-52">
+      <div className="flex justify-between">
+        <Suspense fallback={"Welcome!"}>
+          <Username />
+        </Suspense>
+        <form action={logOut}>
+          <button>Log out</button>
+        </form>
+      </div>
+      <div className="flex flex-col gap-5">
+        <div>등록한 상품들</div>
+        <UserProducts products={products} />
+      </div>
+      <div className="flex flex-col gap-5">
+        <div>등록한 게시물들</div>
+        <UserPosts posts={posts} />
+      </div>
     </div>
   );
 }

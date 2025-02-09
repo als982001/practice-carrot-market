@@ -13,6 +13,8 @@ import { PencilIcon } from "@heroicons/react/24/solid";
 import PostComments from "@/components/PostComments";
 
 async function getPost(id: number) {
+  console.log("getPost");
+
   try {
     const post = await db.post.update({
       where: {
@@ -39,6 +41,7 @@ async function getPost(id: number) {
       },
     });
 
+    console.log(`views: ${post.views}`);
     return post;
   } catch (e) {
     console.error(e);
