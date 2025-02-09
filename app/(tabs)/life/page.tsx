@@ -39,7 +39,7 @@ export default async function Life() {
 
   return (
     <>
-      <div>
+      <div className="p-5">
         {posts.map((post) => (
           <Link
             key={post.id}
