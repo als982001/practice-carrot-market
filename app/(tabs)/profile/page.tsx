@@ -61,11 +61,11 @@ export default async function Profile() {
         </form>
       </div>
       <div className="flex flex-col gap-5">
-        <div>올린 상품들</div>
+        <div>등록한 상품들</div>
         <UserProducts products={products} />
       </div>
       <div className="flex flex-col gap-5">
-        <div>작성한 게시물들</div>
+        <div>등록한 게시물들</div>
         <UserPosts posts={posts} />
       </div>
     </div>
